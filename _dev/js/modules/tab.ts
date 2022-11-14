@@ -1,28 +1,22 @@
 export class tab {
-  o: any;
-  element: any;
-  roots: {};
-  tabItem: any;
-  displayItem: NodeListOf<Element>;
+  element: HTMLAnchorElement;
+  roots: NodeListOf<HTMLAnchorElement>;
+  tabItem: HTMLElement;
+  displayItem: NodeListOf<HTMLElement>;
   content: HTMLElement;
-  activeClass: any;
+  activeClass: string;
   /**
-   * @param  {Element} element rootとなる要素
+   * @param  {HTMLAnchorElement} element ターゲットとなる要素
+   * @param  {NodeListOf<HTMLAnchorElement>} roots rootとなる要素
    * @returns void
    */
-  constructor(element, roots = {}) {
-    const defaultOptions = {
-      activeClass: 'is-active',
-      tabItem: 'js-tab-item',
-    };
-
-    this.o = Object.assign(defaultOptions);
+  constructor(element: HTMLAnchorElement, roots: NodeListOf<HTMLAnchorElement>) {
     this.element = element;
     this.roots = roots;
     this.tabItem = null;
-    this.displayItem = document.querySelectorAll(`.${this.o.tabItem}`);
+    this.displayItem = document.querySelectorAll('.js-tab-item');
     this.content = document.getElementById(this.element.hash.substring(1));
-    this.activeClass = this.o.activeClass;
+    this.activeClass = 'is-active';
 
     this.init();
 
@@ -42,23 +36,23 @@ export class tab {
   }
 
   /**
-   * @param  {object} event 発火ボタンのイベント
+   * @param {MouseEvent} e 発火ボタンのイベント
    */
-  clickHandler(e) {
+  clickHandler(e: MouseEvent) {
     e.preventDefault();
 
-    for (const item of this.roots) {
-      item.parentNode.classList.remove(this.activeClass);
-    }
+    this.roots.forEach(item => {
+      item.parentElement.classList.remove(this.activeClass);
+    });
 
-    for (const item of this.displayItem) {
+    this.displayItem.forEach(item => {
       item.classList.remove(this.activeClass);
-    }
+    });
 
-    const href = e.target.getAttribute('href').substring(1);
+    const href = this.element.getAttribute('aria-controls');
     this.tabItem = document.getElementById(href);
 
-    this.element.parentNode.classList.add(this.activeClass);
+    this.element.parentElement.classList.add(this.activeClass);
     this.content.classList.add(this.activeClass);
   }
 
@@ -68,25 +62,25 @@ export class tab {
     const hookItems = document.querySelectorAll('.js-tab-item');
 
     if (param.indexOf('tab') === 0) {
-      for (const item of this.roots) {
-        item.parentNode.classList.remove(this.activeClass);
-      }
+      this.roots.forEach(item => {
+        item.parentElement.classList.remove(this.activeClass);
+      });
 
-      for (const item of this.displayItem) {
+      this.displayItem.forEach(item => {
         item.classList.remove(this.activeClass);
-      }
+      });
     }
 
-    for (const hook of hooks) {
+    hooks.forEach(hook => {
       if (hook.getAttribute('href') === `#${param}`) {
-        hook.parentNode.classList.add(this.activeClass);
+        hook.parentElement.classList.add(this.activeClass);
       }
-    }
+    });
 
-    for (const hookItem of hookItems) {
+    hookItems.forEach(hookItem => {
       if (hookItem.getAttribute('id') === `${param}`) {
         hookItem.classList.add(this.activeClass);
       }
-    }
+    });
   }
 }

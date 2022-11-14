@@ -1,8 +1,4 @@
-@use '../_common/'as *;
-
-.str-contents-wrapper {
-  &__inner {}
-}
+@use "../_common/"as *;
 
 .mv {
   width: 100%;
@@ -22,7 +18,7 @@
 
     &--text {
       color: $background-color-01;
-      font-family: 'Noto Serif JP', serif;
+      font-family: "Noto Serif JP", serif;
       font-size: .8rem;
     }
   }

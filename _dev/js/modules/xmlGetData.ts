@@ -1,26 +1,15 @@
 export class xmlGetData {
-  o: any;
-  elements: {};
-  carouselBtn: any;
-  timer: any;
-  items: NodeListOf<Element>;
+  elements: HTMLElement;
+  carouselBtn: HTMLElement;
+  items: Array<Element>;
   ul_element: HTMLUListElement;
   /**
-   * @param  {Element} elements rootとなる要素
+   * @param  {HTMLElement} elements rootとなる要素
    * @returns void
    */
-  constructor(elements = {}) {
-    const defaultOptions = {
-      activeClass: 'is-active',
-      changeClass: 'is-changing',
-      pauseClass: 'is-pause',
-      count: 0,
-    };
-
-    this.o = Object.assign(defaultOptions);
+  constructor(elements: HTMLElement) {
     this.elements = elements;
     this.carouselBtn = document.querySelector('.js-carousel-mv-btn');
-    this.timer;
     this.init();
   }
   /**
@@ -47,13 +36,13 @@ export class xmlGetData {
         const parser = new DOMParser();
         const sitemap = parser.parseFromString(data, 'application/xml');
 
-        this.items = sitemap.querySelectorAll('item');
+        this.items = sitemap.querySelectorAll('item') as unknown as Array<HTMLElement>;
         this.ul_element = document.createElement('ul');
 
-        for(const data of this.items) {
+        for(const dataElm of this.items) {
           const li_element = document.createElement('li');
-          const url = data.querySelector('loc');
-          const last_update = data.querySelector('lastmod');
+          const url = dataElm.querySelector('loc');
+          const last_update = dataElm.querySelector('lastmod');
 
           li_element.innerHTML = `URL：${url.textContent}<br>最終更新日：${last_update.textContent}`;
           this.ul_element.appendChild(li_element);
