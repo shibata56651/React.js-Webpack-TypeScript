@@ -4,13 +4,12 @@ html:
   include: '**/*.html'
   ignore:
     - '**/node_modules/**'
-    - 'node_modules/**'
-    - 'docs/_mlc/**'
+    - 'docs/_mlc/module/shared/inc/**'
     - 'docs/**/inc/**'
 css:
   vnu: https://av.mitsue.com
   charset: utf-8
-  include: 'docs/common/css/main.css'
+  include: 'docs/company/recruit/graduates/common/css/main.css'
   ignore:
     - '**/node_modules/**'
-    - 'docs/**'
+    - 'docs/_mlc/module/shared/**'
