@@ -1,30 +1,34 @@
 export class headertoggle {
   o: any;
-  element: any;
-  toggleRoots: Array<TemplateStringsArray>;
-  targetContent: any;
+  element: HTMLAnchorElement;
+  toggleRoots: NodeListOf<HTMLAnchorElement>;
+  targetContent: HTMLElement;
   toggleId: string;
   toggleFlg: boolean;
-  openStyle: any;
+  openStyle: string;
+  activeClass: string;
+  closeClass: string;
+  closeStyle: string;
   /**
-   * @param  {Element} element rootとなる要素
-   * @param  {Element} toggleRoots aタグ
+   * @param  {HTMLAnchorElement} element rootとなる要素
+   * @param  {NodeListOf<HTMLAnchorElement>} toggleRoots aタグ
    * @returns void
    */
-  constructor(element, toggleRoots = {}) {
+  constructor(element: HTMLAnchorElement, toggleRoots: NodeListOf<HTMLAnchorElement>) {
     const defaultOptions = {
-      activeClass: 'is-active',
-      closeClass: 'is-close',
       toggleHeight: 0,
-      closeStyle: 'height: 0;',
     };
 
     this.o = defaultOptions;
     this.element = element;
-    this.toggleRoots = toggleRoots as Array<TemplateStringsArray>;
+    this.toggleRoots = toggleRoots;
     this.targetContent = undefined;
     this.toggleId = '';
+    this.openStyle = '';
     this.toggleFlg = true;
+    this.activeClass = 'is-active';
+    this.closeClass = 'is-close';
+    this.closeStyle = 'height: 0;';
     this.init();
   }
   /**
@@ -42,45 +46,44 @@ export class headertoggle {
    * @param  {MouseEvent} e クリックした要素
    * @returns void
    */
-  clickHandler(e) {
+  clickHandler(e: MouseEvent) {
     e.preventDefault();
     const href = this.element.getAttribute('aria-controls');
     this.targetContent = document.getElementById(href);
     this.toggleId = this.targetContent.id;
 
-    if (this.element.classList.contains(this.o.activeClass)) {
-
-      this.targetContent.style = this.openStyle;
+    if (this.element.classList.contains(this.activeClass)) {
+      this.targetContent.setAttribute('style', this.openStyle);
 
       setTimeout(() => {
-        this.targetContent.style = this.o.closeStyle;
+        this.targetContent.setAttribute('style', this.closeStyle);
       }, 10);
 
       setTimeout(() => {
-        this.element.classList.remove(this.o.activeClass);
+        this.element.classList.remove(this.activeClass);
         this.closeHandler();
       }, 400);
 
       return;
-    } else if (!this.element.classList.contains(this.o.activeClass)) {
+    } else if (!this.element.classList.contains(this.activeClass)) {
 
       // 別のメガメニューテキストをクリックした際に、現在ついているカレントを外す
-      for (const item of this.toggleRoots) {
+      this.toggleRoots.forEach(item => {
         const targetContent = item.parentNode.querySelector('.header-menu-contents');
-        if (item.classList.contains(this.o.activeClass)) {
-          item.classList.remove(this.o.activeClass);
-          targetContent.style = '';
+        if (item.classList.contains(this.activeClass)) {
+          item.classList.remove(this.activeClass);
+          targetContent.setAttribute('style', '');
         }
-      }
+      });
 
-      this.element.classList.add(this.o.activeClass);
+      this.element.classList.add(this.activeClass);
       this.o.toggleHeight = this.targetContent.offsetHeight;
-      this.targetContent.style = this.o.closeStyle;
+      this.targetContent.setAttribute('style', this.closeStyle);
       this.openStyle = `height: ${this.o.toggleHeight}px;`;
 
       // 更新されたDOMをoffsetHeightで再度読みに行く。
       this.targetContent.offsetHeight;
-      this.targetContent.style = this.openStyle;
+      this.targetContent.setAttribute('style', this.openStyle);
 
       setTimeout(() => {
         this.closeHandler();
@@ -89,6 +92,6 @@ export class headertoggle {
   }
 
   closeHandler() {
-    this.targetContent.style = '';
+    this.targetContent.setAttribute('style', '');
   }
 }

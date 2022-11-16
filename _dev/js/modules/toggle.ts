@@ -1,36 +1,39 @@
 export class toggle {
-  o: any;
-  element: any;
-  elementItem: any;
-  elementBtn: any;
-  toggleRoots: any;
-  toggleJudge: {};
-  targetContent: any;
-  fixedItem: any;
+  element: HTMLElement;
+  elementItem: HTMLElement;
+  elementBtn: HTMLElement;
+  toggleRoots: NodeListOf<HTMLAnchorElement>;
+  toggleJudge: string;
+  targetContent: HTMLElement;
+  fixedItem: HTMLElement;
   toggleId: string;
-  openStyle: any;
+  openStyle: string;
+  c: { animationClass: string; activeClass: string; closeClass: string; };
+  toggleHeight: number;
+  closeStyle: string;
   /**
    * @param  {Element} element rootとなる要素
    * @param  {Element} toggleRoots .js-toggle-roots
    * @returns void
    */
-  constructor(element, toggleRoots, toggleJudge = {}) {
-    const defaultOptions = {
+  constructor(element: HTMLElement, toggleRoots: NodeListOf<HTMLAnchorElement>, toggleJudge: string) {
+    const classNames = {
       animationClass: 'is-animation',
       activeClass: 'is-active',
       closeClass: 'is-close',
-      toggleHeight: 0,
-      closeStyle: 'height: 0;',
     };
 
-    this.o = Object.assign(defaultOptions);
+    this.c = classNames;
     this.element = element;
-    this.elementItem = this.element.querySelector('.js-toggle-item');
-    this.elementBtn = this.element.querySelector('.js-toggle-btn');
     this.toggleRoots = toggleRoots;
     this.toggleJudge = toggleJudge;
+    this.elementItem = this.element.querySelector('.js-toggle-item');
+    this.elementBtn = this.element.querySelector('.js-toggle-btn');
     this.targetContent = undefined;
     this.fixedItem = undefined;
+    this.toggleHeight = 0;
+    this.closeStyle = 'height: 0;';
+    this.openStyle = '';
     this.toggleId = '';
     this.init();
   }
@@ -53,105 +56,105 @@ export class toggle {
  * @param  {MouseEvent} e クリックした要素
  * @returns void
  */
-  clickHandler(e) {
+  clickHandler(e: MouseEvent) {
     e.preventDefault();
     const href = this.elementItem.getAttribute('href').substring(1);
     this.targetContent = document.getElementById(href);
     this.toggleId = this.targetContent.id;
 
     if (this.toggleJudge === 'business') {
-      if (this.elementItem.classList.contains(this.o.activeClass)) {
-        this.targetContent.style = this.openStyle;
+      if (this.elementItem.classList.contains(this.c.activeClass)) {
+        this.targetContent.setAttribute('style', this.openStyle);
 
         setTimeout(() => {
-          this.targetContent.style = this.o.closeStyle;
+          this.targetContent.setAttribute('style', this.closeStyle);
         }, 10);
 
         setTimeout(() => {
-          this.elementItem.classList.remove(this.o.activeClass);
-          this.elementItem.classList.remove(this.o.animationClass);
-          this.elementItem.style = 'display: block';
+          this.elementItem.classList.remove(this.c.activeClass);
+          this.elementItem.classList.remove(this.c.animationClass);
+          this.elementItem.setAttribute('style', 'display: block');
           this.closeHandler();
         }, 400);
         return;
-      } else if (!this.elementItem.classList.contains(this.o.activeClass)) {
+      } else if (!this.elementItem.classList.contains(this.c.activeClass)) {
 
         // 別のメガメニューテキストをクリックした際に、現在ついているカレントを外す
-        for (const item of this.toggleRoots) {
-          if (item.classList.contains(this.o.animationClass)) {
-            item.classList.remove(this.o.animationClass);
-            item.style = '';
+        this.toggleRoots.forEach(item => {
+          if (item.classList.contains(this.c.animationClass)) {
+            item.classList.remove(this.c.animationClass);
+            item.setAttribute('style', '');
           }
 
-          if (item.classList.contains(this.o.activeClass)) {
-            item.classList.remove(this.o.activeClass);
-            item.style = '';
+          if (item.classList.contains(this.c.activeClass)) {
+            item.classList.remove(this.c.activeClass);
+            item.setAttribute('style', '');
           }
-        }
+        });
 
-        this.elementItem.classList.add(this.o.animationClass);
+        this.elementItem.classList.add(this.c.animationClass);
 
         setTimeout(() => {
-          this.elementItem.style = 'display: none';
+          this.elementItem.setAttribute('style', 'display: none');
         }, 250);
 
         setTimeout(() => {
-          this.elementItem.classList.add(this.o.activeClass);
+          this.elementItem.classList.add(this.c.activeClass);
 
-          this.o.toggleHeight = this.targetContent.offsetHeight;
-          this.targetContent.style = this.o.closeStyle;
+          this.toggleHeight = this.targetContent.offsetHeight;
+          this.targetContent.setAttribute('style', this.closeStyle);
 
           this.fixedItem = this.targetContent.querySelector('.js-toggle-content');
-          this.fixedItem.style = 'position: absolute;bottom: 0;width: 100%;';
+          this.fixedItem.setAttribute('style', 'position: absolute;bottom: 0;width: 100%;');
 
-          this.openStyle = `height: ${this.o.toggleHeight}px;`;
+          this.openStyle = `height: ${this.toggleHeight}px;`;
 
           // 更新されたDOMをoffsetHeightで再度読みに行く。
           this.targetContent.offsetHeight;
-          this.targetContent.style = this.openStyle;
+          this.targetContent.setAttribute('style', this.openStyle);
 
           setTimeout(() => {
             this.closeHandler();
-            this.fixedItem.style = '';
+            this.fixedItem.setAttribute('style', '');
           }, 300);
         }, 250);
       }
     } else {
-      if (this.element.classList.contains(this.o.activeClass)) {
-        this.targetContent.style = this.openStyle;
+      if (this.element.classList.contains(this.c.activeClass)) {
+        this.targetContent.setAttribute('style', this.openStyle);
 
         setTimeout(() => {
-          this.targetContent.style = this.o.closeStyle;
+          this.targetContent.setAttribute('style', this.closeStyle);
         }, 10);
 
         setTimeout(() => {
-          this.element.classList.remove(this.o.activeClass);
-          this.element.classList.remove(this.o.animationClass);
+          this.element.classList.remove(this.c.activeClass);
+          this.element.classList.remove(this.c.animationClass);
           this.closeHandler();
         }, 400);
 
-        this.openStyle = `height: ${this.o.toggleHeight}px;`;
+        this.openStyle = `height: ${this.toggleHeight}px;`;
 
         return;
-      } else if (!this.element.classList.contains(this.o.activeClass)) {
+      } else if (!this.element.classList.contains(this.c.activeClass)) {
         // 別のメガメニューテキストをクリックした際に、現在ついているカレントを外す
 
         setTimeout(() => {
-          this.element.classList.add(this.o.activeClass);
+          this.element.classList.add(this.c.activeClass);
 
-          this.o.toggleHeight = this.targetContent.offsetHeight + 10;
-          this.targetContent.style = this.o.closeStyle;
-          this.openStyle = `height: ${this.o.toggleHeight}px;`;
+          this.toggleHeight = this.targetContent.offsetHeight + 10;
+          this.targetContent.setAttribute('style', this.closeStyle);
+          this.openStyle = `height: ${this.toggleHeight}px;`;
 
           // 更新されたDOMをoffsetHeightで再度読みに行く。
           this.targetContent.offsetHeight;
-          this.targetContent.style = this.openStyle;
+          this.targetContent.setAttribute('style', this.openStyle);
         }, 50);
       }
     }
   }
 
   closeHandler() {
-    this.targetContent.style = '';
+    this.targetContent.setAttribute('style', '');
   }
 }

@@ -1,116 +1,18 @@
-@use '../../_common/' as *;
+@use "../../_common/" as *;
 
 .str {
- &-footer {
-   &__sns-ul  {
-     &-ul {
-       display: flex;
-       justify-content: center;
-     }
-   }
+  &-footer {
+    &__sns-ul {
+      &-ul {
+        display: flex;
+        justify-content: center;
+      }
+    }
 
-   &__list {
-     &-ul {
-       display: flex;
-     }
-
-     &-anchor {
-       color: var.$color-text;
-       transition: var.$animation-duration;
-
-       @include mixin.hover {
-         color: var.$color-base-main;
-       }
-     }
-   }
-
-   &__copylight {
-     width: 100%;
-     background: var.$color-gradient-footer;
-
-     &-text {
-       margin-top: 0;
-       color: var.$color-base-white;
-       text-align: center;
-     }
-   }
- }
-
- @include mixin.media-min(var.$content-width-header) {
-   &-footer {
-     &__sns {
-       &-items {
-         &:nth-of-type(n+2) {
-           margin-left: 32px;
-         }
-       }
-
-       +.str-footer {
-         &__list {
-           margin-top: 40px;
-         }
-       }
-     }
-
-     &__copylight {
-       padding: 28px 20px;
-     }
-   }
- }
-
- @include mixin.media-min(var.$breakpoint-sp) {
-   &-footer {
-     &__list {
-       &-ul {
-         justify-content: center;
-       }
-
-       &-items {
-         &:nth-of-type(n+2) {
-           margin-left: 40px;
-         }
-       }
-     }
-
-     &__contents {
-       padding: 50px 20px 32px;
-     }
-   }
- }
-
- @include mixin.media-max(var.$content-width-header) {
-   &-footer {
-     &__sns {
-       &-items {
-         &:nth-of-type(n+2) {
-           margin-left: 16px;
-         }
-       }
-     }
-
-     &__copylight {
-       padding: 21px;
-     }
-   }
- }
-
- @include mixin.media-max(var.$breakpoint-sp) {
-   &-footer {
-     &__list {
-       &-ul {
-         flex-wrap: wrap;
-         gap: 10px;
-       }
-
-       &-items {
-         max-width: calc(50% - 10px);
-         width: 100%;
-       }
-     }
-
-     &__contents {
-       padding: 30px 16px 18px;
-     }
-   }
- }
+    &__list {
+      &-ul {
+        display: flex;
+      }
+    }
+  }
 }

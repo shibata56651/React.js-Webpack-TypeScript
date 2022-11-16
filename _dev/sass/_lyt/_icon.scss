@@ -1,34 +1,9 @@
-@use '../_common/' as *;
+@use "../_common/" as *;
 
 .nav-list-contents {
   .header-icon-arrow-a {
     transition: .3s;
     transform: translateY(1px);
-  }
-
-  @include rwd(bpTab) {
-    &._no-icon {
-    .header-icon-arrow-a {
-        display: none;
-      }
-    }
-  }
-
-  @include rwd(bpTab, below) {
-    &._no-icon {
-      .header-icon-arrow-a {
-          position: absolute;
-          top: 50%;
-          right: 12px;
-          transform: rotate(-90deg) translateX(2px);
-        }
-      }
-
-    &:not(._no-icon) {
-      .header-icon-arrow-a {
-        display: none;
-      }
-    }
   }
 }
 

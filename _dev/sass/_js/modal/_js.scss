@@ -1,4 +1,4 @@
-@use '../../_common/'as *;
+@use "../../_common/"as *;
 
 /* モーダルjsのスタイル */
 .js-modal-content {
@@ -38,25 +38,6 @@
           z-index: 101;
         }
 
-        &._type-a {
-          >.modal {
-            max-height: calc(100vh - 125px);
-            margin: 80px auto 0;
-          }
-
-          .modal-content {
-            padding: 30px;
-          }
-
-          .close-area {
-            >.btn-close {
-              top: 20px;
-              width: 48px;
-              height: 48px;
-            }
-          }
-        }
-
         .close-area {
           display: flex;
           justify-content: flex-end;
@@ -73,7 +54,8 @@
 
             &::before,
             &::after {
-              @include pseudo();
+              @include pseudo;
+
               top: 50%;
               left: 50%;
               width: 15px;
@@ -94,38 +76,12 @@
     }
   }
 
-  @include rwd(bpSp, above) {
-    [data-script-enabled="true"] & {
-      &.is-active {
-        .modal-wrap {
-          &._type-a {
-            width: auto;
-          }
-        }
-      }
-    }
-  }
-
   @include rwd(bpSp, below) {
     [data-script-enabled="true"] & {
       &.is-active {
         .modal-wrap {
           >.modal {
             width: calc(100% - 20px);
-          }
-
-          &._type-a {
-            .modal-content {
-              padding: 20px;
-            }
-
-            .close-area {
-              >.btn-close {
-                top: 30px;
-                width: 28px;
-                height: 28px;
-              }
-            }
           }
         }
       }
@@ -137,7 +93,8 @@
   position: relative;
 
   &::before {
-    @include pseudo();
+    @include pseudo;
+
     right: 18px;
     bottom: 18px;
     width: 16px;

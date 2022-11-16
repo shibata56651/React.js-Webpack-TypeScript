@@ -517,6 +517,201 @@ exports.jsonGetData = jsonGetData;
 
 /***/ }),
 
+/***/ "./_dev/js/modules/modal.ts":
+/*!**********************************!*\
+  !*** ./_dev/js/modules/modal.ts ***!
+  \**********************************/
+/***/ (function(__unused_webpack_module, exports) {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports.modal = void 0;
+
+var modal =
+/** @class */
+function () {
+  /**
+   * @param  {Element} element rootとなる要素
+   * @returns void
+   */
+  function modal(element) {
+    var _this = this;
+    /**
+     * @param  {object} event 発火ボタンのイベント
+     */
+    // tabindexの付与処理
+
+
+    this.setTabindex = function () {
+      _this.focusAllElem.forEach(function (elem) {
+        var saveTabindex = elem.getAttribute('tabindex');
+
+        if (saveTabindex) {
+          elem.setAttribute('data-tabindex', saveTabindex);
+        }
+
+        elem.tabIndex = -1;
+      });
+    }; // tabindexの削除処理
+
+
+    this.removeTabIndex = function () {
+      _this.focusAllElem.forEach(function (elem) {
+        var saveDataTabindex = elem.getAttribute('data-tabindex');
+
+        if (saveDataTabindex) {
+          elem.tabIndex = Number(saveDataTabindex);
+          elem.removeAttribute('data-tabindex');
+          return;
+        }
+
+        elem.removeAttribute('tabindex');
+      });
+    }; // モーダル消去
+
+
+    this.removeModal = function () {
+      var targetHook = document.querySelector("[href=\"#".concat(activeModalId, "\"]"));
+      document.body.classList.remove('is-modal-fixed');
+      document.body.style.top = '';
+      window.scrollTo(0, topElm);
+
+      _this.removeTabIndex();
+
+      modalContent.forEach(function (modalItem) {
+        if (modalItem.classList.contains(_this.o.activeClass)) {
+          modalItem.classList.remove(_this.o.activeClass);
+          modalOverlay.classList.remove(_this.o.activeClass);
+        }
+      }); // モーダル消去時youtube再生を停止する
+
+      if (youtube) {
+        youtube.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*');
+      }
+
+      targetHook.focus(); // フックにフォーカスを戻す
+    }; // escキーイベント
+
+    /**
+     * @param  {object} event ESCキーのイベント
+     */
+
+
+    this.escKeyEvent = function (event) {
+      modalContent.forEach(function (modalItem) {
+        if (modalItem.classList.contains(_this.o.activeClass)) {
+          var keyEvent = event.key;
+
+          if (keyEvent === 'Escape' || keyEvent === 'Esc') {
+            removeModal();
+          }
+        }
+      });
+    };
+    /**
+     * @param  {object} targetElm 押下したa要素のhref属性と一致するid持つ要素
+     */
+
+
+    this.activeModal = function (targetElm) {
+      var modalFocusItems = targetElm.querySelectorAll(FOCUS_ELEM);
+      modalOverlay.classList.add(_this.o.activeClass);
+      targetElm.classList.add(_this.o.activeClass);
+      setTabindex(); // 背景固定
+
+      document.body.classList.add('is-modal-fixed');
+      document.body.style.top = "-".concat(topElm, "px");
+      modalFocusItems.forEach(function (modalFocusItem) {
+        modalFocusItem.tabIndex = 0;
+      });
+    };
+
+    var defaultOptions = {
+      activeClass: 'is-active',
+      moreShowContents: 'js-more-show',
+      focusElem: 'a, input, button, option'
+    };
+    this.o = Object.assign(defaultOptions);
+    this.element = element;
+    var modalClose = document.querySelectorAll('.js-modal-close');
+    var modalContent = document.querySelectorAll('.js-modal-content');
+    var newOverlay = document.createElement('div');
+    this.focusAllElem = document.querySelectorAll(this.o.focusElem);
+    var OVERLAY_ID = 'js-modal-overlay';
+    var youtube;
+    var targetContent = null;
+    var topElm = 0;
+    var activeModalId = '';
+    newOverlay.id = OVERLAY_ID;
+    document.body.appendChild(newOverlay);
+    var modalOverlay = document.getElementById(OVERLAY_ID);
+    this.init();
+  }
+  /**
+   * 初期化処理
+   *
+   * @returns void
+   */
+
+
+  modal.prototype.init = function () {
+    // モーダル発火
+    this.element.addEventListener('click', this.clickHandler.bind(this));
+  };
+
+  modal.prototype.forEach = function () {};
+
+  return modal;
+}();
+
+exports.modal = modal;
+
+(function (root) {
+  root.addEventListener('click', function (e) {
+    var href = root.getAttribute('href');
+    targetContent = document.getElementById(href.substring(1));
+    topElm = window.pageYOffset; // youtube動画がある場合、youtube APIを有効
+
+    if (targetContent.querySelector('.lyt-movie-a > .lyt-movie-inner > iframe')) {
+      youtube = targetContent.querySelector('.lyt-movie-a > .lyt-movie-inner > iframe');
+      var dataSrcFlg = youtube.hasAttribute('data-src');
+
+      if (dataSrcFlg && !youtube.src) {
+        youtube.src = youtube.dataset.src;
+      }
+
+      var srcAttr = dataSrcFlg ? 'data-src' : 'src';
+      var srcTxt = youtube.getAttribute(srcAttr);
+      var separator = srcTxt.indexOf('?') !== -1 ? '&' : '?';
+
+      if (srcTxt.indexOf('enablejsapi=1') === -1) {
+        srcTxt += "".concat(separator, "enablejsapi=1");
+        youtube.setAttribute(srcAttr, srcTxt);
+      }
+    }
+
+    activeModalId = targetContent.id;
+    e.preventDefault();
+    activeModal(targetContent);
+  });
+});
+
+; // closeボタン押下時
+
+modalClose.forEach(function (closeItem) {
+  closeItem.addEventListener('click', function () {
+    removeModal();
+  });
+}); // オーバーレイクリック時
+
+modalOverlay.addEventListener('click', removeModal); // escキー押下時のキーイベント
+
+win.addEventListener('keyup', escKeyEvent);
+
+/***/ }),
+
 /***/ "./_dev/js/modules/moreShow.ts":
 /*!*************************************!*\
   !*** ./_dev/js/modules/moreShow.ts ***!
@@ -578,157 +773,6 @@ function () {
 }();
 
 exports.moreShow = moreShow;
-
-/***/ }),
-
-/***/ "./_dev/js/modules/paramScroll.ts":
-/*!****************************************!*\
-  !*** ./_dev/js/modules/paramScroll.ts ***!
-  \****************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-exports.paramScroll = void 0;
-
-var OffsetTop_1 = __webpack_require__(/*! ../utility/OffsetTop */ "./_dev/js/utility/OffsetTop.ts");
-/**
- * パラメータから表示させたい要素までスクロールさせる機能
- */
-
-
-var paramScroll =
-/** @class */
-function () {
-  /**
-   * @param  {Element} element rootとなる要素
-   * @param  {Element} displayElms aタグ要素
-   * @returns void
-   */
-  function paramScroll(element, displayElms, options) {
-    if (options === void 0) {
-      options = {};
-    }
-
-    var defaultOptions = {
-      offset: 134
-    };
-    this.o = Object.assign(defaultOptions, options);
-    this.element = element;
-    this.displayElms = displayElms;
-    this.scrollTarget = document.getElementById(this.element.substring(1));
-    this.scrollFlg = false;
-    this.scrollTargetPos = 0;
-    this.scrollHandler = this.scrolling.bind(this);
-    this.init();
-  }
-  /**
-   * 初期化処理
-   *
-   * @returns void
-   */
-
-
-  paramScroll.prototype.init = function () {
-    window.addEventListener('load', this.clickHandler.bind(this));
-  };
-  /**
-   * クリック時スクロール対象要素までスクロール
-   *
-   * @param  {MouseEvent} e イベント
-   * @returns void
-   */
-
-
-  paramScroll.prototype.clickHandler = function () {
-    if (!this.scrollTarget) {
-      return;
-    }
-
-    this.displayElms.classList.add('is-active');
-    this.displayElms.style = 'display:none;';
-
-    if (document.body.clientWidth <= 1170) {
-      this.o.offset = 87;
-    }
-
-    this.scrollTargetPos = (0, OffsetTop_1.offsetTop)(this.scrollTarget) - this.o.offset;
-    history.pushState(null, '', this.element);
-    window.scrollTo({
-      top: this.scrollTargetPos,
-      behavior: 'smooth'
-    });
-    this.scrollFlg = false;
-    window.addEventListener('scroll', this.scrollHandler);
-    this.setWatchScrollFlg();
-  };
-  /**
-  * スクロール中はthis.scrollFlgをtrueにする処理
-  *
-  * @returns void
-  */
-
-
-  paramScroll.prototype.scrolling = function () {
-    this.scrollFlg = true;
-  };
-  /**
-   * スクロール中のthis.scrollFlgを監視する処理
-   *
-   * @returns void
-   */
-
-
-  paramScroll.prototype.setWatchScrollFlg = function () {
-    var _this = this;
-
-    var watchScrollFlg = setInterval(function () {
-      if (!_this.scrollFlg) {
-        clearInterval(watchScrollFlg);
-        window.removeEventListener('scroll', _this.scrollHandler);
-
-        _this.setFocusTarget();
-
-        return;
-      }
-
-      _this.scrollFlg = false;
-    }, 100);
-  };
-  /**
-   * 対象要素までスクロールが到達した時の処理
-   *
-   * @returns void
-   */
-
-
-  paramScroll.prototype.setFocusTarget = function () {
-    if (!this.scrollTarget) {
-      return;
-    }
-
-    var hasTabindex = this.scrollTarget.hasAttribute('tabindex');
-
-    if (!hasTabindex) {
-      this.scrollTarget.setAttribute('tabindex', '-1');
-    }
-
-    console.log(this.scrollTarget);
-    this.scrollTarget.focus();
-    this.scrollTarget.blur();
-    window.scrollTo(0, this.scrollTargetPos);
-
-    if (!hasTabindex) {
-      this.scrollTarget.removeAttribute('tabindex');
-    }
-  };
-
-  return paramScroll;
-}();
-
-exports.paramScroll = paramScroll;
 
 /***/ }),
 
@@ -1320,10 +1364,10 @@ function () {
       _this.ul_element = document.createElement('ul');
 
       for (var _i = 0, _a = _this.items; _i < _a.length; _i++) {
-        var data_1 = _a[_i];
+        var dataElm = _a[_i];
         var li_element = document.createElement('li');
-        var url = data_1.querySelector('loc');
-        var last_update = data_1.querySelector('lastmod');
+        var url = dataElm.querySelector('loc');
+        var last_update = dataElm.querySelector('lastmod');
         li_element.innerHTML = "URL\uFF1A".concat(url.textContent, "<br>\u6700\u7D42\u66F4\u65B0\u65E5\uFF1A").concat(last_update.textContent);
 
         _this.ul_element.appendChild(li_element);
@@ -24519,21 +24563,17 @@ var headertoggle_1 = __webpack_require__(/*! ./modules/headertoggle */ "./_dev/j
 
 var toggle_1 = __webpack_require__(/*! ./modules/toggle */ "./_dev/js/modules/toggle.ts");
 
-var paramScroll_1 = __webpack_require__(/*! ./modules/paramScroll */ "./_dev/js/modules/paramScroll.ts");
+var modal_1 = __webpack_require__(/*! ./modules/modal */ "./_dev/js/modules/modal.ts");
 
 var jsonGetData_1 = __webpack_require__(/*! ./modules/jsonGetData */ "./_dev/js/modules/jsonGetData.ts");
 
 var xmlGetData_1 = __webpack_require__(/*! ./modules/xmlGetData */ "./_dev/js/modules/xmlGetData.ts");
-
-var mvAnimation_1 = __webpack_require__(Object(function webpackMissingModule() { var e = new Error("Cannot find module './modules/mvAnimation'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 
 __webpack_require__(/*! @babel/polyfill */ "./node_modules/@babel/polyfill/lib/index.js");
 
 __webpack_require__(/*! scroll-behavior-polyfill */ "./node_modules/scroll-behavior-polyfill/dist/index.js");
 
 (function (win, doc) {
-  var HTML = document.documentElement;
-  var body = doc.body;
   var swiperTopRoot = doc.querySelector('.js-swiper-recommend');
 
   if (swiperTopRoot) {
@@ -24615,240 +24655,59 @@ __webpack_require__(/*! scroll-behavior-polyfill */ "./node_modules/scroll-behav
   var anchorLinks = doc.querySelectorAll('a[href^="#anc-"], a[href="#top"]');
   var urlHash = doc.location.hash;
 
-  for (var _i = 0, anchorLinks_1 = anchorLinks; _i < anchorLinks_1.length; _i++) {
-    var item = anchorLinks_1[_i];
-    new SmoothScroll_1.SmoothScroll(item, urlHash);
+  if (anchorLinks.length) {
+    anchorLinks.forEach(function (item) {
+      new SmoothScroll_1.SmoothScroll(item, urlHash);
+    });
   } // PCheaderトグル
 
 
   var headerToggleRoots = doc.querySelectorAll('.js-header-menu-items');
 
   if (headerToggleRoots.length) {
-    for (var _a = 0, headerToggleRoots_1 = headerToggleRoots; _a < headerToggleRoots_1.length; _a++) {
-      var item = headerToggleRoots_1[_a];
+    headerToggleRoots.forEach(function (item) {
       new headertoggle_1.headertoggle(item, headerToggleRoots);
-    }
+    });
   }
 
   var modalRoots = doc.querySelectorAll('.js-modal-hook');
 
-  if (modalRoots) {
-    var modalClose = doc.querySelectorAll('.js-modal-close');
-    var modalContent_1 = doc.querySelectorAll('.js-modal-content');
-    var newOverlay = doc.createElement('div');
-    var FOCUS_ELEM_1 = 'a, input, button, option';
-    var FOCUS_ALL_ELEM_1 = doc.querySelectorAll(FOCUS_ELEM_1);
-    var OVERLAY_ID = 'js-modal-overlay';
-    var ACTIVE_CLASS_1 = 'is-active';
-    var youtube_1;
-    var targetContent_1 = null;
-    var topElm_1 = 0;
-    var activeModalId_1 = '';
-    newOverlay.id = OVERLAY_ID;
-    doc.body.appendChild(newOverlay);
-    var modalOverlay_1 = doc.getElementById(OVERLAY_ID); // tabindexの付与処理
-
-    var setTabindex_1 = function setTabindex_1() {
-      FOCUS_ALL_ELEM_1.forEach(function (elem) {
-        var saveTabindex = elem.getAttribute('tabindex');
-
-        if (saveTabindex) {
-          elem.setAttribute('data-tabindex', saveTabindex);
-        }
-
-        elem.tabIndex = -1;
-      });
-    }; // tabindexの削除処理
-
-
-    var removeTabIndex_1 = function removeTabIndex_1() {
-      FOCUS_ALL_ELEM_1.forEach(function (elem) {
-        var saveDataTabindex = elem.getAttribute('data-tabindex');
-
-        if (saveDataTabindex) {
-          elem.tabIndex = Number(saveDataTabindex);
-          elem.removeAttribute('data-tabindex');
-          return;
-        }
-
-        elem.removeAttribute('tabindex');
-      });
-    }; // モーダル消去
-
-
-    var removeModal_1 = function removeModal_1() {
-      var targetHook = doc.querySelector("[href=\"#".concat(activeModalId_1, "\"]"));
-      document.body.classList.remove('is-modal-fixed');
-      document.body.style.top = '';
-      window.scrollTo(0, topElm_1);
-      removeTabIndex_1();
-      modalContent_1.forEach(function (modalItem) {
-        if (modalItem.classList.contains(ACTIVE_CLASS_1)) {
-          modalItem.classList.remove(ACTIVE_CLASS_1);
-          modalOverlay_1.classList.remove(ACTIVE_CLASS_1);
-        }
-      }); // モーダル消去時youtube再生を停止する
-
-      if (youtube_1) {
-        youtube_1.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*');
-      }
-
-      targetHook.focus(); // フックにフォーカスを戻す
-    }; // escキーイベント
-
-    /**
-     * @param  {object} event ESCキーのイベント
-     */
-
-
-    var escKeyEvent = function escKeyEvent(event) {
-      modalContent_1.forEach(function (modalItem) {
-        if (modalItem.classList.contains(ACTIVE_CLASS_1)) {
-          var keyEvent = event.key;
-
-          if (keyEvent === 'Escape' || keyEvent === 'Esc') {
-            removeModal_1();
-          }
-        }
-      });
-    };
-    /**
-     * @param  {object} targetElm 押下したa要素のhref属性と一致するid持つ要素
-     */
-
-
-    var activeModal_1 = function activeModal_1(targetElm) {
-      var modalFocusItems = targetElm.querySelectorAll(FOCUS_ELEM_1);
-      modalOverlay_1.classList.add(ACTIVE_CLASS_1);
-      targetElm.classList.add(ACTIVE_CLASS_1);
-      setTabindex_1(); // 背景固定
-
-      document.body.classList.add('is-modal-fixed');
-      document.body.style.top = "-".concat(topElm_1, "px");
-      modalFocusItems.forEach(function (modalFocusItem) {
-        modalFocusItem.tabIndex = 0;
-      });
-    }; // モーダル発火
-
-
-    modalRoots.forEach(function (root) {
-      root.addEventListener('click', function (e) {
-        var href = root.getAttribute('href');
-        targetContent_1 = doc.getElementById(href.substring(1));
-        topElm_1 = window.pageYOffset; // youtube動画がある場合、youtube APIを有効
-
-        if (targetContent_1.querySelector('.lyt-movie-a > .lyt-movie-inner > iframe')) {
-          youtube_1 = targetContent_1.querySelector('.lyt-movie-a > .lyt-movie-inner > iframe');
-          var dataSrcFlg = youtube_1.hasAttribute('data-src');
-
-          if (dataSrcFlg && !youtube_1.src) {
-            youtube_1.src = youtube_1.dataset.src;
-          }
-
-          var srcAttr = dataSrcFlg ? 'data-src' : 'src';
-          var srcTxt = youtube_1.getAttribute(srcAttr);
-          var separator = srcTxt.indexOf('?') !== -1 ? '&' : '?';
-
-          if (srcTxt.indexOf('enablejsapi=1') === -1) {
-            srcTxt += "".concat(separator, "enablejsapi=1");
-            youtube_1.setAttribute(srcAttr, srcTxt);
-          }
-        }
-
-        activeModalId_1 = targetContent_1.id;
-        e.preventDefault();
-        activeModal_1(targetContent_1);
-      });
-    }); // closeボタン押下時
-
-    modalClose.forEach(function (closeItem) {
-      closeItem.addEventListener('click', function () {
-        removeModal_1();
-      });
-    }); // オーバーレイクリック時
-
-    modalOverlay_1.addEventListener('click', removeModal_1); // escキー押下時のキーイベント
-
-    win.addEventListener('keyup', escKeyEvent);
+  if (modalRoots.length) {
+    modalRoots.forEach(function (items) {
+      new modal_1.modal(items);
+    });
   }
 
   var tabRoots = doc.querySelectorAll('.js-tab-hook');
 
-  if (tabRoots) {
-    for (var _b = 0, tabRoots_1 = tabRoots; _b < tabRoots_1.length; _b++) {
-      var item = tabRoots_1[_b];
+  if (tabRoots.length) {
+    tabRoots.forEach(function (item) {
       new tab_1.tab(item, tabRoots);
-    }
+    });
   }
 
   var moreShowRoots = doc.querySelectorAll('.js-show-btn');
 
-  if (moreShowRoots) {
-    for (var _c = 0, moreShowRoots_1 = moreShowRoots; _c < moreShowRoots_1.length; _c++) {
-      var item = moreShowRoots_1[_c];
+  if (moreShowRoots.length) {
+    moreShowRoots.forEach(function (item) {
       new moreShow_1.moreShow(item);
-    }
-  }
-
-  var targets = doc.querySelectorAll('.js-history-animations');
-  var wrapTarget = doc.querySelector('.box-history');
-
-  if (targets.length) {
-    addEventListener('scroll', function () {
-      if (pageYOffset >= 200) {
-        wrapTarget.classList.add('is-animation');
-        var i_1 = 0;
-        var setAnimation_1 = setInterval(function () {
-          if (targets.length > i_1) {
-            targets[i_1].classList.add('is-fade');
-            i_1++;
-          } else {
-            clearInterval(setAnimation_1);
-          }
-        }, 200);
-      }
     });
   }
 
   var fadeRoots = doc.querySelectorAll('.js-fade-roots');
 
-  if (fadeRoots) {
-    for (var _d = 0, fadeRoots_1 = fadeRoots; _d < fadeRoots_1.length; _d++) {
-      var item = fadeRoots_1[_d];
+  if (fadeRoots.length) {
+    fadeRoots.forEach(function (item) {
       new fade_1.fade(item);
-    }
+    });
   }
 
   var toggleRoots = doc.querySelectorAll('.js-toggle-roots');
 
   if (toggleRoots.length) {
-    for (var _e = 0, toggleRoots_1 = toggleRoots; _e < toggleRoots_1.length; _e++) {
-      var item = toggleRoots_1[_e];
+    toggleRoots.forEach(function (item) {
       var togglejudge = item.dataset.toggleJudge;
       new toggle_1.toggle(item, toggleRoots, togglejudge);
-    }
-  }
-
-  var displayElms = doc.querySelector("a[href^=\"#".concat(doc.location.search.substring(1), "\"]"));
-  var param = doc.location.search;
-
-  if (param.match('business')) {
-    new paramScroll_1.paramScroll(param, displayElms);
-  }
-
-  var cardItems = doc.querySelectorAll('.js-card-animation');
-
-  if (cardItems) {
-    win.addEventListener('load', function () {
-      var i = 0;
-      var setAnimation = setInterval(function () {
-        if (cardItems.length > i) {
-          cardItems[i].classList.add('is-animation');
-          i++;
-        } else {
-          clearInterval(setAnimation);
-        }
-      }, 200);
     });
   }
 
@@ -24862,13 +24721,6 @@ __webpack_require__(/*! scroll-behavior-polyfill */ "./node_modules/scroll-behav
 
   if (xmlRoots) {
     new xmlGetData_1.xmlGetData(xmlRoots);
-  } // アンカーリンク
-
-
-  var animationRoot = doc.querySelector('.mv__animation-wrap');
-
-  if (animationRoot) {
-    new mvAnimation_1.mvAnimation(animationRoot);
   }
 })(window, document);
 }();
