@@ -10,7 +10,7 @@ const entry = {
   'main.css': './_dev/sass/main.scss',
 };
 
-const cssJsFunc = (mode) => {
+const buildJs = (mode) => {
   return {
   // メインとなるJavaScriptファイル（エントリーポイント）
     stats: {
@@ -56,42 +56,6 @@ const cssJsFunc = (mode) => {
             },
           ],
         },
-        {
-          test: /\.(png|jpe?g|gif|svg)$/i,
-          type: 'asset/resource',
-          generator: {
-            filename: './common/images/[name][ext]'
-          }
-        },
-        {
-        // 処理対象ファイル
-          test: /\.scss$/,
-          exclude: /node_modules/,
-          use: [
-            MiniCssExtractPlugin.loader,
-            'css-loader',
-            {
-              loader: 'sass-loader',
-              options: {
-                implementation: require('sass'),
-              },
-            },
-            {
-              loader: 'postcss-loader',
-              options: {
-                postcssOptions: {
-                // sourceMap: true,
-                  plugins: [
-                    require('autoprefixer')({
-                      grid: true
-                    }),
-                    require('cssnano'),
-                  ],
-                },
-              },
-            },
-          ],
-        },
       ],
     },
     resolve: {
@@ -129,9 +93,9 @@ module.exports = (env, argv) => {
   const {mode} = argv;
 
   if (mode === 'development') {
-    cssJsFunc.watch = true;
+    buildJs.watch = true;
   }
 
-  const cssJsFuncString = cssJsFunc(mode);
-  return cssJsFuncString;
+  const buildJsString = buildJs(mode);
+  return buildJsString;
 };
