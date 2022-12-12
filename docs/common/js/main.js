@@ -330,27 +330,24 @@ var headertoggle =
 /** @class */
 function () {
   /**
-   * @param  {Element} element rootとなる要素
-   * @param  {Element} toggleRoots aタグ
+   * @param  {HTMLAnchorElement} element rootとなる要素
+   * @param  {NodeListOf<HTMLAnchorElement>} toggleRoots aタグ
    * @returns void
    */
   function headertoggle(element, toggleRoots) {
-    if (toggleRoots === void 0) {
-      toggleRoots = {};
-    }
-
     var defaultOptions = {
-      activeClass: 'is-active',
-      closeClass: 'is-close',
-      toggleHeight: 0,
-      closeStyle: 'height: 0;'
+      toggleHeight: 0
     };
     this.o = defaultOptions;
     this.element = element;
     this.toggleRoots = toggleRoots;
     this.targetContent = undefined;
     this.toggleId = '';
+    this.openStyle = '';
     this.toggleFlg = true;
+    this.activeClass = 'is-active';
+    this.closeClass = 'is-close';
+    this.closeStyle = 'height: 0;';
     this.init();
   }
   /**
@@ -379,36 +376,34 @@ function () {
     this.targetContent = document.getElementById(href);
     this.toggleId = this.targetContent.id;
 
-    if (this.element.classList.contains(this.o.activeClass)) {
-      this.targetContent.style = this.openStyle;
+    if (this.element.classList.contains(this.activeClass)) {
+      this.targetContent.setAttribute('style', this.openStyle);
       setTimeout(function () {
-        _this.targetContent.style = _this.o.closeStyle;
+        _this.targetContent.setAttribute('style', _this.closeStyle);
       }, 10);
       setTimeout(function () {
-        _this.element.classList.remove(_this.o.activeClass);
+        _this.element.classList.remove(_this.activeClass);
 
         _this.closeHandler();
       }, 400);
       return;
-    } else if (!this.element.classList.contains(this.o.activeClass)) {
+    } else if (!this.element.classList.contains(this.activeClass)) {
       // 別のメガメニューテキストをクリックした際に、現在ついているカレントを外す
-      for (var _i = 0, _a = this.toggleRoots; _i < _a.length; _i++) {
-        var item = _a[_i];
+      this.toggleRoots.forEach(function (item) {
         var targetContent = item.parentNode.querySelector('.header-menu-contents');
 
-        if (item.classList.contains(this.o.activeClass)) {
-          item.classList.remove(this.o.activeClass);
-          targetContent.style = '';
+        if (item.classList.contains(_this.activeClass)) {
+          item.classList.remove(_this.activeClass);
+          targetContent.setAttribute('style', '');
         }
-      }
-
-      this.element.classList.add(this.o.activeClass);
+      });
+      this.element.classList.add(this.activeClass);
       this.o.toggleHeight = this.targetContent.offsetHeight;
-      this.targetContent.style = this.o.closeStyle;
+      this.targetContent.setAttribute('style', this.closeStyle);
       this.openStyle = "height: ".concat(this.o.toggleHeight, "px;"); // 更新されたDOMをoffsetHeightで再度読みに行く。
 
       this.targetContent.offsetHeight;
-      this.targetContent.style = this.openStyle;
+      this.targetContent.setAttribute('style', this.openStyle);
       setTimeout(function () {
         _this.closeHandler();
       }, 300);
@@ -416,7 +411,7 @@ function () {
   };
 
   headertoggle.prototype.closeHandler = function () {
-    this.targetContent.style = '';
+    this.targetContent.setAttribute('style', '');
   };
 
   return headertoggle;
@@ -442,21 +437,17 @@ var jsonGetData =
 /** @class */
 function () {
   /**
-   * @param  {Element} elements rootとなる要素
+   * @param  {HTMLElement} elements rootとなる要素
    * @returns void
    */
   function jsonGetData(elements) {
-    if (elements === void 0) {
-      elements = {};
-    }
-
     var defaultOptions = {
       activeClass: 'is-active',
       changeClass: 'is-changing',
       pauseClass: 'is-pause',
       count: 0
     };
-    this.o = Object.assign(defaultOptions);
+    this.o = defaultOptions;
     this.elements = elements;
     this.carouselBtn = document.querySelector('.js-carousel-mv-btn');
     this.timer;
@@ -484,13 +475,13 @@ function () {
     this.jsonPath = '/common/data/newdata.json';
     this.jsonObj = {};
     this.obj = new XMLHttpRequest();
-    this.obj.open('get', this.jsonPath, false);
+    this.obj.open('get', this.jsonPath, false); // eslint-disable-next-line @typescript-eslint/no-this-alias
 
-    var _this = this;
+    var targetJson = this;
 
     this.obj.onreadystatechange = function () {
       try {
-        _this.jsonObj = JSON.parse(this.responseText);
+        targetJson.jsonObj = JSON.parse(this.responseText);
       } catch (e) {
         return;
       }
@@ -1026,27 +1017,19 @@ var tab =
 /** @class */
 function () {
   /**
-   * @param  {Element} element rootとなる要素
+   * @param  {HTMLAnchorElement} element ターゲットとなる要素
+   * @param  {NodeListOf<HTMLAnchorElement>} roots rootとなる要素
    * @returns void
    */
   function tab(element, roots) {
-    if (roots === void 0) {
-      roots = {};
-    }
-
     var _this = this;
 
-    var defaultOptions = {
-      activeClass: 'is-active',
-      tabItem: 'js-tab-item'
-    };
-    this.o = Object.assign(defaultOptions);
     this.element = element;
     this.roots = roots;
     this.tabItem = null;
-    this.displayItem = document.querySelectorAll(".".concat(this.o.tabItem));
+    this.displayItem = document.querySelectorAll('.js-tab-item');
     this.content = document.getElementById(this.element.hash.substring(1));
-    this.activeClass = this.o.activeClass;
+    this.activeClass = 'is-active';
     this.init();
     window.addEventListener('load', function () {
       _this.loadHandler();
@@ -1064,61 +1047,52 @@ function () {
     this.element.addEventListener('click', this.clickHandler.bind(this));
   };
   /**
-   * @param  {object} event 発火ボタンのイベント
+   * @param {MouseEvent} e 発火ボタンのイベント
    */
 
 
   tab.prototype.clickHandler = function (e) {
+    var _this = this;
+
     e.preventDefault();
-
-    for (var _i = 0, _a = this.roots; _i < _a.length; _i++) {
-      var item = _a[_i];
-      item.parentNode.classList.remove(this.activeClass);
-    }
-
-    for (var _b = 0, _c = this.displayItem; _b < _c.length; _b++) {
-      var item = _c[_b];
-      item.classList.remove(this.activeClass);
-    }
-
-    var href = e.target.getAttribute('href').substring(1);
+    this.roots.forEach(function (item) {
+      item.parentElement.classList.remove(_this.activeClass);
+    });
+    this.displayItem.forEach(function (item) {
+      item.classList.remove(_this.activeClass);
+    });
+    var href = this.element.getAttribute('aria-controls');
     this.tabItem = document.getElementById(href);
-    this.element.parentNode.classList.add(this.activeClass);
+    this.element.parentElement.classList.add(this.activeClass);
     this.content.classList.add(this.activeClass);
   };
 
   tab.prototype.loadHandler = function () {
+    var _this = this;
+
     var param = location.search.substring(1);
     var hooks = document.querySelectorAll('.js-tab-hook');
     var hookItems = document.querySelectorAll('.js-tab-item');
 
     if (param.indexOf('tab') === 0) {
-      for (var _i = 0, _a = this.roots; _i < _a.length; _i++) {
-        var item = _a[_i];
-        item.parentNode.classList.remove(this.activeClass);
-      }
-
-      for (var _b = 0, _c = this.displayItem; _b < _c.length; _b++) {
-        var item = _c[_b];
-        item.classList.remove(this.activeClass);
-      }
+      this.roots.forEach(function (item) {
+        item.parentElement.classList.remove(_this.activeClass);
+      });
+      this.displayItem.forEach(function (item) {
+        item.classList.remove(_this.activeClass);
+      });
     }
 
-    for (var _d = 0, hooks_1 = hooks; _d < hooks_1.length; _d++) {
-      var hook = hooks_1[_d];
-
+    hooks.forEach(function (hook) {
       if (hook.getAttribute('href') === "#".concat(param)) {
-        hook.parentNode.classList.add(this.activeClass);
+        hook.parentElement.classList.add(_this.activeClass);
       }
-    }
-
-    for (var _e = 0, hookItems_1 = hookItems; _e < hookItems_1.length; _e++) {
-      var hookItem = hookItems_1[_e];
-
+    });
+    hookItems.forEach(function (hookItem) {
       if (hookItem.getAttribute('id') === "".concat(param)) {
-        hookItem.classList.add(this.activeClass);
+        hookItem.classList.add(_this.activeClass);
       }
-    }
+    });
   };
 
   return tab;
@@ -1149,25 +1123,22 @@ function () {
    * @returns void
    */
   function toggle(element, toggleRoots, toggleJudge) {
-    if (toggleJudge === void 0) {
-      toggleJudge = {};
-    }
-
-    var defaultOptions = {
+    var classNames = {
       animationClass: 'is-animation',
       activeClass: 'is-active',
-      closeClass: 'is-close',
-      toggleHeight: 0,
-      closeStyle: 'height: 0;'
+      closeClass: 'is-close'
     };
-    this.o = Object.assign(defaultOptions);
+    this.c = classNames;
     this.element = element;
-    this.elementItem = this.element.querySelector('.js-toggle-item');
-    this.elementBtn = this.element.querySelector('.js-toggle-btn');
     this.toggleRoots = toggleRoots;
     this.toggleJudge = toggleJudge;
+    this.elementItem = this.element.querySelector('.js-toggle-item');
+    this.elementBtn = this.element.querySelector('.js-toggle-btn');
     this.targetContent = undefined;
     this.fixedItem = undefined;
+    this.toggleHeight = 0;
+    this.closeStyle = 'height: 0;';
+    this.openStyle = '';
     this.toggleId = '';
     this.init();
   }
@@ -1202,92 +1173,98 @@ function () {
     this.toggleId = this.targetContent.id;
 
     if (this.toggleJudge === 'business') {
-      if (this.elementItem.classList.contains(this.o.activeClass)) {
-        this.targetContent.style = this.openStyle;
+      if (this.elementItem.classList.contains(this.c.activeClass)) {
+        this.targetContent.setAttribute('style', this.openStyle);
         setTimeout(function () {
-          _this.targetContent.style = _this.o.closeStyle;
+          _this.targetContent.setAttribute('style', _this.closeStyle);
         }, 10);
         setTimeout(function () {
-          _this.elementItem.classList.remove(_this.o.activeClass);
+          _this.elementItem.classList.remove(_this.c.activeClass);
 
-          _this.elementItem.classList.remove(_this.o.animationClass);
+          _this.elementItem.classList.remove(_this.c.animationClass);
 
-          _this.elementItem.style = 'display: block';
+          _this.elementItem.setAttribute('style', 'display: block');
 
           _this.closeHandler();
         }, 400);
         return;
-      } else if (!this.elementItem.classList.contains(this.o.activeClass)) {
+      } else if (!this.elementItem.classList.contains(this.c.activeClass)) {
         // 別のメガメニューテキストをクリックした際に、現在ついているカレントを外す
-        for (var _i = 0, _a = this.toggleRoots; _i < _a.length; _i++) {
-          var item = _a[_i];
-
-          if (item.classList.contains(this.o.animationClass)) {
-            item.classList.remove(this.o.animationClass);
-            item.style = '';
+        this.toggleRoots.forEach(function (item) {
+          if (item.classList.contains(_this.c.animationClass)) {
+            item.classList.remove(_this.c.animationClass);
+            item.setAttribute('style', '');
           }
 
-          if (item.classList.contains(this.o.activeClass)) {
-            item.classList.remove(this.o.activeClass);
-            item.style = '';
+          if (item.classList.contains(_this.c.activeClass)) {
+            item.classList.remove(_this.c.activeClass);
+            item.setAttribute('style', '');
           }
-        }
-
-        this.elementItem.classList.add(this.o.animationClass);
+        });
+        this.elementItem.classList.add(this.c.animationClass);
         setTimeout(function () {
-          _this.elementItem.style = 'display: none';
+          _this.elementItem.setAttribute('style', 'display: none');
         }, 250);
         setTimeout(function () {
-          _this.elementItem.classList.add(_this.o.activeClass);
+          _this.elementItem.classList.add(_this.c.activeClass);
 
-          _this.o.toggleHeight = _this.targetContent.offsetHeight;
-          _this.targetContent.style = _this.o.closeStyle;
+          _this.toggleHeight = _this.targetContent.offsetHeight;
+
+          _this.targetContent.setAttribute('style', _this.closeStyle);
+
           _this.fixedItem = _this.targetContent.querySelector('.js-toggle-content');
-          _this.fixedItem.style = 'position: absolute;bottom: 0;width: 100%;';
-          _this.openStyle = "height: ".concat(_this.o.toggleHeight, "px;"); // 更新されたDOMをoffsetHeightで再度読みに行く。
+
+          _this.fixedItem.setAttribute('style', 'position: absolute;bottom: 0;width: 100%;');
+
+          _this.openStyle = "height: ".concat(_this.toggleHeight, "px;"); // 更新されたDOMをoffsetHeightで再度読みに行く。
 
           _this.targetContent.offsetHeight;
-          _this.targetContent.style = _this.openStyle;
+
+          _this.targetContent.setAttribute('style', _this.openStyle);
+
           setTimeout(function () {
             _this.closeHandler();
 
-            _this.fixedItem.style = '';
+            _this.fixedItem.setAttribute('style', '');
           }, 300);
         }, 250);
       }
     } else {
-      if (this.element.classList.contains(this.o.activeClass)) {
-        this.targetContent.style = this.openStyle;
+      if (this.element.classList.contains(this.c.activeClass)) {
+        this.targetContent.setAttribute('style', this.openStyle);
         setTimeout(function () {
-          _this.targetContent.style = _this.o.closeStyle;
+          _this.targetContent.setAttribute('style', _this.closeStyle);
         }, 10);
         setTimeout(function () {
-          _this.element.classList.remove(_this.o.activeClass);
+          _this.element.classList.remove(_this.c.activeClass);
 
-          _this.element.classList.remove(_this.o.animationClass);
+          _this.element.classList.remove(_this.c.animationClass);
 
           _this.closeHandler();
         }, 400);
-        this.openStyle = "height: ".concat(this.o.toggleHeight, "px;");
+        this.openStyle = "height: ".concat(this.toggleHeight, "px;");
         return;
-      } else if (!this.element.classList.contains(this.o.activeClass)) {
+      } else if (!this.element.classList.contains(this.c.activeClass)) {
         // 別のメガメニューテキストをクリックした際に、現在ついているカレントを外す
         setTimeout(function () {
-          _this.element.classList.add(_this.o.activeClass);
+          _this.element.classList.add(_this.c.activeClass);
 
-          _this.o.toggleHeight = _this.targetContent.offsetHeight + 10;
-          _this.targetContent.style = _this.o.closeStyle;
-          _this.openStyle = "height: ".concat(_this.o.toggleHeight, "px;"); // 更新されたDOMをoffsetHeightで再度読みに行く。
+          _this.toggleHeight = _this.targetContent.offsetHeight + 10;
+
+          _this.targetContent.setAttribute('style', _this.closeStyle);
+
+          _this.openStyle = "height: ".concat(_this.toggleHeight, "px;"); // 更新されたDOMをoffsetHeightで再度読みに行く。
 
           _this.targetContent.offsetHeight;
-          _this.targetContent.style = _this.openStyle;
+
+          _this.targetContent.setAttribute('style', _this.openStyle);
         }, 50);
       }
     }
   };
 
   toggle.prototype.closeHandler = function () {
-    this.targetContent.style = '';
+    this.targetContent.setAttribute('style', '');
   };
 
   return toggle;
@@ -1313,24 +1290,12 @@ var xmlGetData =
 /** @class */
 function () {
   /**
-   * @param  {Element} elements rootとなる要素
+   * @param  {HTMLElement} elements rootとなる要素
    * @returns void
    */
   function xmlGetData(elements) {
-    if (elements === void 0) {
-      elements = {};
-    }
-
-    var defaultOptions = {
-      activeClass: 'is-active',
-      changeClass: 'is-changing',
-      pauseClass: 'is-pause',
-      count: 0
-    };
-    this.o = Object.assign(defaultOptions);
     this.elements = elements;
     this.carouselBtn = document.querySelector('.js-carousel-mv-btn');
-    this.timer;
     this.init();
   }
   /**
@@ -24706,8 +24671,8 @@ __webpack_require__(/*! scroll-behavior-polyfill */ "./node_modules/scroll-behav
 
   if (toggleRoots.length) {
     toggleRoots.forEach(function (item) {
-      var togglejudge = item.dataset.toggleJudge;
-      new toggle_1.toggle(item, toggleRoots, togglejudge);
+      var toggleJudge = item.dataset.toggleJudge;
+      new toggle_1.toggle(item, toggleRoots, toggleJudge);
     });
   }
 

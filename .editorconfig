@@ -1,9 +1,11 @@
 root = true
 
-[*]
+[*.html]
 charset = utf-8
+indent_size = 2
 end_of_line = crlf
 insert_final_newline = true
 
 [*.js]
 indent_size = 2
+end_of_line = lf

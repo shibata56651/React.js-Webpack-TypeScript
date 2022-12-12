@@ -11,7 +11,7 @@
     "lint:html": "vlint",
     "lint:css": "vlint --css",
     "lint:js": "eslint -c ./.eslintrc _dev/js/**",
-    "test": "run-s build jest",
+    "watch": "webpack --config webpack.config.js --mode=development",
     "jest": "jest --config=./_dev/jest.config.js --testTimeout=30000",
     "jest:update": "jest --config=./_dev/jest.config.js --testTimeout=30000 --update-snapshot"
   },
@@ -21,7 +21,7 @@
     "@babel/preset-env": "^7.15.8",
     "@babel/preset-typescript": "7.15.0",
     "@mitsue/eslint-config": "^4.0.1",
-    "@mitsue/vlint": "^0.8.0",
+    "@mitsue/vlint": "^0.9.1",
     "@typescript-eslint/eslint-plugin": "^4.31.2",
     "@typescript-eslint/parser": "^4.31.2",
     "autoprefixer": "^10.3.1",

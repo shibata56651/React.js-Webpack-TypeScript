@@ -1,18 +1,18 @@
 export class jsonGetData {
-  o: any;
-  elements: {};
+  elements: HTMLElement;
   carouselBtn: any;
   timer: any;
   jsonPath: string;
-  jsonObj: {};
+  jsonObj: any;
   obj: XMLHttpRequest;
   json_data: any;
   ul_element: HTMLUListElement;
+  o: { activeClass: string; changeClass: string; pauseClass: string; count: number; };
   /**
-   * @param  {Element} elements rootとなる要素
+   * @param  {HTMLElement} elements rootとなる要素
    * @returns void
    */
-  constructor(elements = {}) {
+  constructor(elements: HTMLElement) {
     const defaultOptions = {
       activeClass: 'is-active',
       changeClass: 'is-changing',
@@ -20,12 +20,13 @@ export class jsonGetData {
       count: 0,
     };
 
-    this.o = Object.assign(defaultOptions);
+    this.o = defaultOptions;
     this.elements = elements;
     this.carouselBtn = document.querySelector('.js-carousel-mv-btn');
     this.timer;
     this.init();
   }
+
   /**
    * 初期化処理
    *
@@ -49,10 +50,11 @@ export class jsonGetData {
 
     this.obj.open('get', this.jsonPath, false);
 
-    const _this = this;
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const targetJson = this;
     this.obj.onreadystatechange = function () {
       try {
-        _this.jsonObj = JSON.parse(this.responseText);
+        targetJson.jsonObj = JSON.parse(this.responseText);
       } catch (e) {
         return;
       }
@@ -62,7 +64,7 @@ export class jsonGetData {
     this.json_data = JSON.parse(JSON.stringify(this.jsonObj));
     this.ul_element = document.createElement('ul');
 
-    for(const data in this.json_data) {
+    for (const data in this.json_data) {
       const li_element = document.createElement('li');
       li_element.classList.add('list-person');
       li_element.innerHTML = `<div class="list-person__content">

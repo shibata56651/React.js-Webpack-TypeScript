@@ -1,4 +1,4 @@
-import { TAB_INDEX_ELEMENTS } from '../utility/config';
+import {TAB_INDEX_ELEMENTS} from '../utility/config';
 
 const FOCUS_ALL_ELEM = document.querySelectorAll(TAB_INDEX_ELEMENTS.FOCUS_ELEMENT) as unknown as Array<HTMLElement>;
 
@@ -6,7 +6,6 @@ const FOCUS_ALL_ELEM = document.querySelectorAll(TAB_INDEX_ELEMENTS.FOCUS_ELEMEN
  * Tabindexを付与する処理
  */
 export const setTabIndex = (spMenuFlg, targetElems) => {
-
   if (FOCUS_ALL_ELEM) {
     for (const elem of FOCUS_ALL_ELEM) {
       const saveTabindex = elem.getAttribute('tabindex');

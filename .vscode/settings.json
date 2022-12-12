@@ -1,9 +1,9 @@
 {
   "eslint.options" : {
-    "configFile": ".eslintrc"
+    "configFile": ".eslintrc.js"
   },
   "eslint.enable": true,
-  "eslint.nodePath": "../node_modules/eslint/",
+  "eslint.nodePath": "./",
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },

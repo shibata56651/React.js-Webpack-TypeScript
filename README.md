@@ -12,17 +12,33 @@ gulpのバージョンが古い場合は、グローバルと案件ディレク�
 * babel
 * polifill
 * 各js→main.jsへバンドル
+
 * scss→cssコンパイル
 * ejs→htmlコンパイル
+
+# タスクに入る前に
+vscodeのワークスペースごとのsetting.jsonに下記を追加
+```
+"eslint.options" : {
+    "configFile": ".eslintrc.js"
+  },
+  "eslint.enable": true,
+  "eslint.nodePath": "./",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+```
+
+.eslintrc.js 内の設定がeslintとして動くので、適宜修正お願いします。
 
 # コマンド
 ## _install.bat
 Nodeのバージョンとnpmのバージョンを合わせてください。
-Nodistが入っている場合は、ローカルに.node-versionと.npm-versionがあるので対応不要です。
+~~ Nodistが入っている場合は、ローカルに.node-versionと.npm-versionがあるので対応不要です。~~
+Nodeバージョン管理ツールがvoltaの場合、package.jsonにバージョンをpinしているので、バージョン変更不要です。
 
-## _ejsCompile.bat
-ejs→HTMLへコンパイルします。（gulpを使用）
-監視状態に入るので、対応が済んだらctrl+cで処理から出てください。
+## _gulp.bat
+ejs→HTML、scss→cssへコンパイルします。（gulpを使用）
 
 ## _lint-css.bat
 cssをリンターにかけます。

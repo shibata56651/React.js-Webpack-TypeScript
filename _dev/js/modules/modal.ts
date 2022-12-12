@@ -2,6 +2,12 @@ export class modal {
   o: any;
   element: Element;
   focusAllElem: NodeListOf<HTMLElement>;
+  topElm: number;
+  modalClose: NodeListOf<HTMLElement>;
+  modalContent: NodeListOf<HTMLElement>;
+  modalOverlay: HTMLElement;
+  activeModalId: string;
+  targetContent: HTMLElement;
   /**
    * @param  {Element} element rootとなる要素
    * @returns void
@@ -15,20 +21,21 @@ export class modal {
 
     this.o = Object.assign(defaultOptions);
     this.element = element;
-    const modalClose = document.querySelectorAll<HTMLElement>('.js-modal-close');
-    const modalContent = document.querySelectorAll<HTMLElement>('.js-modal-content');
+    this.modalClose = document.querySelectorAll<HTMLElement>('.js-modal-close');
+    this.modalContent = document.querySelectorAll<HTMLElement>('.js-modal-content');
     const newOverlay: HTMLDivElement = document.createElement('div');
     this.focusAllElem = document.querySelectorAll<HTMLElement>(this.o.focusElem);
     const OVERLAY_ID = 'js-modal-overlay';
     let youtube;
     let targetContent = null;
-    let topElm = 0;
-    let activeModalId = '';
+    this.topElm = 0;
+    this.activeModalId = '';
+    this.targetContent = undefined;
 
     newOverlay.id = OVERLAY_ID;
     document.body.appendChild(newOverlay);
 
-    const modalOverlay = document.getElementById(OVERLAY_ID);
+    this.modalOverlay = document.getElementById(OVERLAY_ID);
 
     this.init();
   }
@@ -41,6 +48,37 @@ export class modal {
   init() {
     // モーダル発火
     this.element.addEventListener('click', this.clickHandler.bind(this));
+  }
+
+  clickHandler(e) {
+    e.preventDefault();
+
+    const href = this.element.getAttribute('href');
+
+    this.targetContent = document.getElementById(href.substring(1));
+    topElm = window.pageYOffset;
+
+    // youtube動画がある場合、youtube APIを有効
+    // if (targetContent.querySelector('.lyt-movie-a > .lyt-movie-inner > iframe')) {
+    //   youtube = targetContent.querySelector('.lyt-movie-a > .lyt-movie-inner > iframe');
+    //   const dataSrcFlg = youtube.hasAttribute('data-src');
+    //   if (dataSrcFlg && !youtube.src) {
+    //     youtube.src = youtube.dataset.src;
+    //   }
+
+    //   const srcAttr = dataSrcFlg ? 'data-src' : 'src';
+    //   let srcTxt = youtube.getAttribute(srcAttr);
+    //   const separator = srcTxt.indexOf('?') !== -1 ? '&' : '?';
+
+    //   if (srcTxt.indexOf('enablejsapi=1') === -1) {
+    //     srcTxt += `${separator}enablejsapi=1`;
+
+    //     youtube.setAttribute(srcAttr, srcTxt);
+    //   }
+    // }
+
+    this.activeModalId = this.targetContent.id;
+    this.activeModal(targetContent);
   }
 
   /**
@@ -81,13 +119,13 @@ export class modal {
 
      document.body.classList.remove('is-modal-fixed');
      document.body.style.top = '';
-     window.scrollTo(0, topElm);
+     window.scrollTo(0, this.topElm);
 
      this.removeTabIndex();
-     modalContent.forEach((modalItem) => {
+     this.modalContent.forEach((modalItem) => {
        if (modalItem.classList.contains(this.o.activeClass)) {
          modalItem.classList.remove(this.o.activeClass);
-         modalOverlay.classList.remove(this.o.activeClass);
+         this.modalOverlay.classList.remove(this.o.activeClass);
        }
      });
 
@@ -103,12 +141,12 @@ export class modal {
     * @param  {object} event ESCキーのイベント
     */
    escKeyEvent = (event) => {
-     modalContent.forEach((modalItem) => {
+     this.modalContent.forEach((modalItem) => {
        if (modalItem.classList.contains(this.o.activeClass)) {
          const keyEvent = event.key;
 
          if (keyEvent === 'Escape' || keyEvent === 'Esc') {
-           removeModal();
+           this.removeModal();
          }
        }
      });
@@ -120,55 +158,22 @@ export class modal {
    activeModal = (targetElm) => {
      const modalFocusItems = targetElm.querySelectorAll(FOCUS_ELEM);
 
-     modalOverlay.classList.add(this.o.activeClass);
+     this.modalOverlay.classList.add(this.o.activeClass);
      targetElm.classList.add(this.o.activeClass);
-     setTabindex();
+     this.setTabindex();
 
      // 背景固定
      document.body.classList.add('is-modal-fixed');
-     document.body.style.top = `-${topElm}px`;
+     document.body.style.top = `-${this.topElm}px`;
      modalFocusItems.forEach((modalFocusItem) => {
        modalFocusItem.tabIndex = 0;
      });
    };
 
-   // モーダル発火
-   modalRoots.forEach((root) => {
-     root.addEventListener('click', (e) => {
-       const href = root.getAttribute('href');
-
-       targetContent = document.getElementById(href.substring(1));
-       topElm = window.pageYOffset;
-
-       // youtube動画がある場合、youtube APIを有効
-       if (targetContent.querySelector('.lyt-movie-a > .lyt-movie-inner > iframe')) {
-         youtube = targetContent.querySelector('.lyt-movie-a > .lyt-movie-inner > iframe');
-         const dataSrcFlg = youtube.hasAttribute('data-src');
-         if (dataSrcFlg && !youtube.src) {
-           youtube.src = youtube.dataset.src;
-         }
-
-         const srcAttr = dataSrcFlg ? 'data-src' : 'src';
-         let srcTxt = youtube.getAttribute(srcAttr);
-         const separator = srcTxt.indexOf('?') !== -1 ? '&' : '?';
-
-         if (srcTxt.indexOf('enablejsapi=1') === -1) {
-           srcTxt += `${separator}enablejsapi=1`;
-
-           youtube.setAttribute(srcAttr, srcTxt);
-         }
-       }
-
-       activeModalId = targetContent.id;
-       e.preventDefault();
-       activeModal(targetContent);
-     });
-   });
-
    // closeボタン押下時
-   modalClose.forEach((closeItem) => {
+   this.modalClose.forEach((closeItem) => {
      closeItem.addEventListener('click', () => {
-       removeModal();
+       this.removeModal();
      });
    });
 

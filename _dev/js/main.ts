@@ -1,14 +1,14 @@
 import './init';
-import { swiper } from './modules/swiper';
-import { fade } from './modules/fade';
-import { SmoothScroll } from './modules/SmoothScroll';
-import { tab } from './modules/tab';
-import { moreShow } from './modules/moreShow';
-import { headertoggle } from './modules/headertoggle';
-import { toggle } from './modules/toggle';
-import { modal } from './modules/modal';
-import { jsonGetData } from './modules/jsonGetData';
-import { xmlGetData } from './modules/xmlGetData';
+import {swiper} from './modules/swiper';
+import {fade} from './modules/fade';
+import {SmoothScroll} from './modules/SmoothScroll';
+import {tab} from './modules/tab';
+import {moreShow} from './modules/moreShow';
+import {headertoggle} from './modules/headertoggle';
+import {toggle} from './modules/toggle';
+import {modal} from './modules/modal';
+import {jsonGetData} from './modules/jsonGetData';
+import {xmlGetData} from './modules/xmlGetData';
 import '@babel/polyfill';
 import 'scroll-behavior-polyfill';
 
@@ -71,7 +71,7 @@ import 'scroll-behavior-polyfill';
         speed: 1000,
         autoplay: {
           delay: 5000,
-          disableOnInteraction: false
+          disableOnInteraction: false,
         },
         pagination: {
           el: '.js-carousel-pagination',
@@ -95,7 +95,7 @@ import 'scroll-behavior-polyfill';
   const urlHash = doc.location.hash;
 
   if (anchorLinks.length) {
-    anchorLinks.forEach(item => {
+    anchorLinks.forEach((item) => {
       new SmoothScroll(item, urlHash);
     });
   }
@@ -112,7 +112,7 @@ import 'scroll-behavior-polyfill';
   const modalRoots = doc.querySelectorAll<HTMLElement>('.js-modal-hook');
 
   if (modalRoots.length) {
-    modalRoots.forEach(items => {
+    modalRoots.forEach((items) => {
       new modal(items);
     });
   }
@@ -120,7 +120,7 @@ import 'scroll-behavior-polyfill';
   const tabRoots = doc.querySelectorAll<HTMLAnchorElement>('.js-tab-hook');
 
   if (tabRoots.length) {
-    tabRoots.forEach(item => {
+    tabRoots.forEach((item) => {
       new tab(item, tabRoots);
     });
   }
@@ -128,7 +128,7 @@ import 'scroll-behavior-polyfill';
   const moreShowRoots = doc.querySelectorAll<HTMLElement>('.js-show-btn');
 
   if (moreShowRoots.length) {
-    moreShowRoots.forEach(item => {
+    moreShowRoots.forEach((item) => {
       new moreShow(item);
     });
   }
@@ -136,7 +136,7 @@ import 'scroll-behavior-polyfill';
   const fadeRoots = doc.querySelectorAll<HTMLElement>('.js-fade-roots');
 
   if (fadeRoots.length) {
-    fadeRoots.forEach(item => {
+    fadeRoots.forEach((item) => {
       new fade(item);
     });
   }
@@ -144,8 +144,8 @@ import 'scroll-behavior-polyfill';
   const toggleRoots = doc.querySelectorAll<HTMLAnchorElement>('.js-toggle-roots');
 
   if (toggleRoots.length) {
-    toggleRoots.forEach(item => {
-      const toggleJudge = item.dataset.toggleJudge;
+    toggleRoots.forEach((item) => {
+      const {toggleJudge} = item.dataset;
       new toggle(item, toggleRoots, toggleJudge);
     });
   }
@@ -161,5 +161,4 @@ import 'scroll-behavior-polyfill';
   if (xmlRoots) {
     new xmlGetData(xmlRoots);
   }
-
 })(window, document);
