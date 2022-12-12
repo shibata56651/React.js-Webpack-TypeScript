@@ -4,13 +4,14 @@ import {Title, Content, PublishButton} from "./index";
 const Article = (props) => {
   const [isPublished, setIsPublished] = useState(false);
   const publishArticle = () => {
-    setIsPublished(true)
+    // isPublishedの値を読み取り、反転させる（!がつくと）
+    setIsPublished(prevState => !prevState);
   }
   return(
     <div>
       <Title title={props.title}></Title>
       <Content content={props.content}></Content>
-      <PublishButton isPublished={isPublished} onClick={publishArticle}></PublishButton>
+      <PublishButton isPublished={isPublished} clickEvent={publishArticle}></PublishButton>
     </div>
   );
 }
