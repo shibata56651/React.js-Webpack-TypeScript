@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {ButtonEvent} from './modules/index'
 import {ButtonStateEvent} from './modules/index'
 
@@ -10,7 +10,9 @@ function App() {
   const [sum, setSum] = useState(0);
 
   const setNum = (num) => {
-    if (firstNum === 0 || secondNum === 0) {
+    Number(num);
+
+    if ((firstNum === 0 || secondNum === 0) && num === 0) {
       flg ? firstSetSum(() => String(num)) : secondSetSum(() => String(num));
     } else {
       flg ? firstSetSum(prevState => String(prevState) + String(num)) : secondSetSum(prevState => String(prevState) + String(num));
@@ -22,16 +24,26 @@ function App() {
     symbolChange(() => init);
   }
 
+  const multi = (a, b) => {
+    return a * b;
+  }
+
+  const addition = (a, b) => {
+    return a + b;
+  }
+
+  const subtraction = (a, b) => {
+    return a - b;
+  }
+
   const summingUp = () => {
     setSum(() => {
       if (symbol === '*') {
-        return Number(firstNum) * Number(secondNum);
+        return multi(Number(firstNum), Number(secondNum));
       } else if (symbol === '+') {
-        return Number(firstNum) + Number(secondNum);
+        return addition(Number(firstNum), Number(secondNum));
       } else if (symbol === '-') {
-        return Number(firstNum) - Number(secondNum);
-      } else if (symbol === '/') {
-        return Number(firstNum) / Number(secondNum);
+        return subtraction(Number(firstNum), Number(secondNum));
       }
     });
   }
