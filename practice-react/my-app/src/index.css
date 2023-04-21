@@ -39,28 +39,152 @@ ul {
   display: flex;
   padding: 0;
   margin: 0;
-  gap: 14px;
 }
 
 li {
   padding: 0;
   list-style: none;
   font-weight: bold;
-  height: 20px;
 }
 
 li button {
   color: #fff;
 }
 
+p {
+  margin: 0;
+}
+
 .str-wrapper {
-  max-width: 800px;
+  max-width: 1000px;
   width: 100%;
+  height: 100vh;
   margin: 0 auto;
-  background: #242424;
+  background: #231649;
+  color: #fff;
 }
 
 .display {
+  height: calc(100vh - 50px);
+  overflow: auto;
+}
+
+.list-symbol {
+  margin-top: 8px;
+}
+
+.list-symbol ul {
+  gap: 16px;
+}
+
+.list-profile > ul {
+  display: block;
+}
+
+.list-profile__text {
+  font-weight: normal;
+}
+
+.list-profile__contents {
+  margin-left: 10px;
+}
+
+.list-profile__user {
+  display: flex;
+  align-items: center;
+}
+
+.list-profile__user-id {
+  display: inline-block;
+  margin-left: 4px;
+  font-weight: normal;
+  font-style: italic;
+  color: rgb(190 190 190);
+}
+
+.list-profile__user-icon-item {
+  font-size: 36px;
+}
+
+.list-profile__item {
+  display: flex;
+}
+
+.list-profile__item:first-of-type {
+  padding-top: 16px;
+}
+
+.list-profile__item:nth-of-type(n+2) {
+  position: relative;
+  margin-top: 20px;
+}
+
+.list-profile__item:nth-of-type(n+2)::before {
+  position: absolute;
+  top: -14px;
+  left: 0;
+  content: "";
   width: 100%;
-  height: 100%;
+  height: 1px;
+  background: rgb(150 150 150);
+}
+
+.btn-list ul {
+  justify-content: center;
+}
+
+.btn-list__item-btn {
+  font-size: 0;
+  padding: 10px;
+}
+
+.btn-list__item-icon {
+  font-size: 30px;
+}
+
+.btn__new-section {
+  position: absolute;
+  bottom: 80px;
+  right: 12px;
+  width: 60px;
+  height: 60px;
+  border-radius: 1000px;
+  border: solid 1px #fff;
+  background: #231649;
+  z-index: 10;
+}
+
+.btn__new-section-text {
+  font-size: 0;
+  color: transparent;
+}
+
+.btn__new-section-text::before {
+  position: absolute;
+  width: 20px;
+  height: 2px;
+  content: "";
+  top: 50%;
+  left: 50%;
+  background: #fff;
+  transform: translate(-50%, -50%);
+}
+
+.btn__new-section-text::after {
+  position: absolute;
+  width: 2px;
+  height: 20px;
+  content: "";
+  top: 50%;
+  left: 50%;
+  background: #fff;
+  transform: translate(-50%, -50%);
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 48;
 }

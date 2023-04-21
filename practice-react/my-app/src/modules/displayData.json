@@ -1,0 +1,53 @@
+{
+  "profile": [
+    {
+      "userName": "ユーザー1",
+      "userId": "userId-01",
+      "content": "プロフィールのダミーテキストダミーテキスト"
+    },
+    {
+      "userName": "ユーザー2",
+      "userId": "userId-02",
+      "content": "プロフィールのダミーテキスト2ダミーテキスト2"
+    },
+    {
+      "userName": "ユーザー3",
+      "userId": "userId-03",
+      "content": "プロフィールのダミーテキスト3ダミーテキスト3"
+    }
+  ],
+  "achievement": [
+    {
+      "userName": "ユーザー1",
+      "userId": "userId-01",
+      "content": "アチーブメントのダミーテキストダミーテキスト"
+    },
+    {
+      "userName": "ユーザー2",
+      "userId": "userId-02",
+      "content": "アチーブメントのダミーテキスト2ダミーテキスト2"
+    },
+    {
+      "userName": "ユーザー3",
+      "userId": "userId-03",
+      "content": "アチーブメントのダミーテキスト3ダミーテキスト3"
+    }
+  ],
+  "contact": [
+    {
+      "userName": "ユーザー1",
+      "userId": "userId-01",
+      "content": "コンタクトのダミーテキストダミーテキスト"
+    },
+    {
+      "userName": "ユーザー2",
+      "userId": "userId-02",
+      "content": "コンタクトのダミーテキスト2ダミーテキスト2"
+    },
+    {
+      "userName": "ユーザー3",
+      "userId": "userId-03",
+      "content": "コンタクトのダミーテキスト3ダミーテキスト3"
+    }
+  ]
+}
